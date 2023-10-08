@@ -1,5 +1,10 @@
 from pprint import pprint
 from time import sleep
+from collections import namedtuple
+
+from exceptions import InstrumentError
+
+PPMSstatus = namedtuple('PPMSstatus', ['temperature', 'field', 'chamber', 'position'])
 
 class PPMS:
     """Class representing a Physical Property Measurement System (PPMS)."""
@@ -51,7 +56,7 @@ class PPMS:
                 self._field = float(field)
                 self._position = float(pos)
                 stat_bin = int(status)
-                self._status = Status(temperature=int(stat_bin & 15),
+                self._status = PPMSstatus(temperature=int(stat_bin & 15),
                                       field=round(int(stat_bin & 240)/2**4),
                                       chamber=round(int(stat_bin & 3840)/2**8),
                                       position=round(int(stat_bin & 61440)/2**12)) # Magic

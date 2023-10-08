@@ -5,8 +5,8 @@ class LCR:
     valid_measurement_types = ["CPD","CPQ","CPG","CPRP","CSD","CSQ","CSRS","LPD","LPQ",
                                "LPG","LPRP","LPRD","LSD","LSQ","LSRS","LSRD","RX","ZTD",
                                "ZTR","GB","YTD","YTR","VDID"]
-    srq = pyvisa.constants.EventType.service_request
-    srq_queue = pyvisa.constants.EventMechanism.queue
+    #srq = pyvisa.constants.EventType.service_request
+    #srq_queue = pyvisa.constants.EventMechanism.queue
 
     def __init__(self, address, resman):
         self.address = address
@@ -135,10 +135,3 @@ class LCR:
     def get_value(self):
         result = self.resource.query("FETCH?").split(',')[0:2]
         return [float(val) for val in result]
-
-class InstrumentError(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-
-    def __str__(self):
-        return f"InstrumentError: {super().__str__()}"

@@ -1,5 +1,5 @@
 import pyvisa
-from collections import namedtuple
+
 import tkinter
 from tkinter import filedialog
 import os
@@ -8,7 +8,9 @@ from PPMS import PPMS
 from LCR import LCR
 from Janis import Janis
 
-Status = namedtuple('Status', ['temperature', 'field', 'chamber', 'position'])
+from exceptions import InstrumentError
+
+device_classes = {'PPMS': PPMS, 'LCR': LCR, 'Janis': Janis}
 
 def increment_filename(filename):
     base_name, ext = os.path.splitext(filename)
@@ -21,10 +23,10 @@ def increment_filename(filename):
 
     return new_filename
 
-class Measurement:
+class MeasurementSetup:
     """Class representing a measurement setup."""
 
-    def __init__(self, addr_lcr='GPIB1::17::INSTR', addr_ppms='GPIB0::15::INSTR'):
+    def __init__(self, addr_lcr=None, addr_ppms=None, addr_janis=None):
         """
         Initialize the Measurement object.
 
@@ -33,17 +35,14 @@ class Measurement:
             addr_ppms (str): Address of the PPMS instrument.
         """
 
-        resman = pyvisa.ResourceManager()
-        try:
-            self.lcr = LCR(addr_lcr, resman)
-        except:
-            print("could not connect to LCR meter")
-            
-        try:
-            self.ppms = PPMS(addr_ppms, resman)
-        except:
-            print("could not connect to PPMS")
-        
+        self._resman = pyvisa.ResourceManager()
+        self._addresses = {'PPMS': addr_ppms, 
+                           'LCR': addr_lcr,
+                           'Janis': addr_janis}
+
+        self.connect_to_devices()
+        if len(self.devices) == 0:
+            raise InstrumentError("no devices connected")     
 
         self._filename = None
         self._temperature_continuous = True
@@ -55,6 +54,33 @@ class Measurement:
         self._tk_root = tkinter.Tk()
         self._tk_root.withdraw()
         
+    def connect_to_devices(self):
+        self.devices = {}
+        for name, addr in self._addresses.items():
+            devcls = device_classes[name]
+            try:
+                self.devices[name] = devcls(addr, self.resman)
+            except:
+                print(f"Could not connect to device {name} at address {addr}")
+
+    @property
+    def supported_devices(self):
+        print("Currently supported devices:")
+        for dev in device_classes.keys():
+            print(dev, '\n')
+
+    @property
+    def lcr(self):
+        return self.devices["LCR"]
+    
+    @property
+    def ppms(self):
+        return self.devices["PPMS"]
+    
+    @property
+    def Janis(self):
+        return self.devices["Janis"]
+
     def choose_filename(self):
         """
         Open a file dialog to choose a filename for saving the measurement data.
@@ -249,6 +275,4 @@ class Measurement:
         self._settle_time = time
 
         pass
-
-
 
