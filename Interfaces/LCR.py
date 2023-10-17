@@ -15,12 +15,13 @@ class LCR:
         self._measurement_time = 'MED'
         self._averages = 1
         self._bias = 0
-        self._cable_length = 0
         self._frequency = 100
         self._measurement_type = 'CPD'
         self._signal_amplitude = 1
         self.measurement_timeout = 3
         self.instrument_name = 'Agilent E4980A'
+        self._signal_type = 'voltage'
+        self._alc_enabled = True
 
         self._initialize()
         self.print_status()
@@ -31,12 +32,19 @@ class LCR:
         self.resource.write(f"APER {self._measurement_time}, {self._averages}")
         self.resource.write("BIAS:STAT OFF")
         self.resource.write(f"BIAS:VOLT {self._bias}")
-        self.resource.write(f"CORR:LENG {self._cable_length}")
         
         self.resource.write(f"FREQ {self._frequency}")
         self.resource.write(f"VOLT {self._signal_amplitude}")
         self.resource.write(f"FUNC:IMP:TYPE {self._measurement_type}")
         self.resource.write("INIT:CONT ON")
+        self.resource.write("AMPL:ALC ON")
+        self.resource.write("FORMAT ASCII")
+
+        #Disable all corrections
+        self.resource.write("CORR:OPEN:STAT OFF")
+        self.resource.write("CORR:SHORT:STAT OFF")
+        self.resource.write("CORR:LOAD:STAT OFF")
+        self.resource.write(f"CORR:LENG 0")
         
         self.resource.timeout = self.measurement_timeout * 1000
         self.resource.clear()
@@ -76,27 +84,26 @@ class LCR:
 
     @bias.setter
     def bias(self, bias):
-        if not 0 <= bias <= 40:
-            raise ValueError("bias must be between 0 and 40 V")
-        self._bias = bias
-        if bias == 0:
-            self.resource.write(f"BIAS:STAT OFF")
-            self.resource.write(f"BIAS:VOLT {self._bias}")
+        if self.signal_type == 'voltage':
+            if not -40 <= bias <= 40:
+                raise ValueError("bias must be between -40 and 40 V")
+            self._bias = bias
+            if bias == 0:
+                self.resource.write(f"BIAS:STAT OFF")
+                self.resource.write(f"BIAS:VOLT {self._bias}")
+            else:
+                self.resource.write(f"BIAS:VOLT {self._bias}")
+                self.resource.write(f"BIAS:STAT ON")
         else:
-            self.resource.write(f"BIAS:VOLT {self._bias}")
-            self.resource.write(f"BIAS:STAT ON")
-        
-    
-    @property
-    def cable_length(self):
-        return self._cable_length
-
-    @cable_length.setter
-    def cable_length(self, cable_length):
-        if not cable_length in [0, 1, 2, 4]:
-            raise ValueError("cable_length must be 0, 1, 2 or 4 m")
-        self._cable_length = cable_length
-        self.resource.write(f"CORR:LENG {self._cable_length}")
+            if not -0.1 <= bias <= 0.1:
+                raise ValueError("bias must be between -0.1 and 0.1 A")
+            self._bias = bias
+            if bias == 0:
+                self.resource.write(f"BIAS:STAT OFF")
+                self.resource.write(f"BIAS:CURR {self._bias}")
+            else:
+                self.resource.write(f"BIAS:CURR {self._bias}")
+                self.resource.write(f"BIAS:STAT ON")
 
     @property
     def frequency(self):
@@ -127,11 +134,45 @@ class LCR:
 
     @signal_amplitude.setter
     def signal_amplitude(self, signal_amplitude):
-        if not 0 <= signal_amplitude <= 20:
-            raise ValueError("signal amplitude must be between 0 and 20 V")
-        self._signal_amplitude = signal_amplitude
-        self.resource.write(f"VOLT {self._signal_amplitude}")
+        if self.signal_type == 'voltage':
+            if not 0 <= signal_amplitude <= 20:
+                raise ValueError("voltage signal amplitude must be between 0 and 20 V")
+            self._signal_amplitude = signal_amplitude
+            self.resource.write(f"VOLT {self._signal_amplitude}")
+        elif self.signal_type == 'current':
+            if not 0 <= signal_amplitude <= 0.1:
+                raise ValueError("current signal amplitude must be between 0 and 0.1 A")
+            self._signal_amplitude = signal_amplitude
+            self.resource.write(f"CURR {self._signal_amplitude}")
+
+    @property
+    def signal_type(self):
+        return self._signal_type
+
+    @signal_type.setter
+    def signal_type(self, signal_type):
+        if not signal_type in ['voltage', 'current']:
+            raise ValueError("signal type must be 'voltage' or 'current")
+        self._signal_type = signal_type
+        self.resource.write(f"CURR 0")
+
+    @property
+    def alc_enabled(self):
+        return self._alc_enabled
+
+    @alc_enabled.setter
+    def alc_enabled(self, alc_enabled):
+        if alc_enabled:
+            self.resource.write("AMPL:ALC ON")
+        else:
+            self.resource.write("AMPL:ALC OFF")
 
     def get_value(self):
         result = self.resource.query("FETCH?").split(',')[0:2]
         return [float(val) for val in result]
+
+    def reset(self):
+        self.resource.write("SYSTEM:PRESET")
+
+    def reboot(self):
+        self.resource.write("SYSTEM:RESTART")
