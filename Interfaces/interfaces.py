@@ -59,7 +59,7 @@ class MeasurementSetup:
         for name, addr in self._addresses.items():
             devcls = device_classes[name]
             try:
-                self.devices[name] = devcls(addr, self.resman)
+                self.devices[name] = devcls(addr, self._resman)
             except:
                 print(f"Could not connect to device {name} at address {addr}")
 
