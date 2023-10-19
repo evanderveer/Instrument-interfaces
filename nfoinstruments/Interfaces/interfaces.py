@@ -8,8 +8,6 @@ from .PPMS import PPMS
 from .LCR import LCR
 from .Janis import Janis
 
-from .exceptions import InstrumentError
-
 device_classes = {'PPMS': PPMS, 'LCR': LCR, 'Janis': Janis}
 
 def increment_filename(filename):
@@ -259,3 +257,9 @@ class MeasurementSetup:
 
         pass
 
+class InstrumentError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+    def __str__(self):
+        return f"InstrumentError: {super().__str__()}"
