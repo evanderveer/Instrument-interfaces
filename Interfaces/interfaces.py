@@ -4,11 +4,11 @@ import tkinter
 from tkinter import filedialog
 import os
 
-from PPMS import PPMS
-from LCR import LCR
-from Janis import Janis
+from .PPMS import PPMS
+from .LCR import LCR
+from .Janis import Janis
 
-from exceptions import InstrumentError
+from .exceptions import InstrumentError
 
 device_classes = {'PPMS': PPMS, 'LCR': LCR, 'Janis': Janis}
 
@@ -36,14 +36,15 @@ class MeasurementSetup:
         """
 
         self._resman = pyvisa.ResourceManager()
+        self._resources = self._resman.list_resources()
         self._addresses = {'PPMS': addr_ppms, 
                            'LCR': addr_lcr,
                            'Janis': addr_janis}
 
-        self.connect_to_devices()
-        if len(self.devices) == 0:
-            raise InstrumentError("no devices connected")     
+        if len(self._resources) == 0:
+            raise InstrumentError("no devices found")     
 
+        #Move all of this into the Measurement class
         self._filename = None
         self._temperature_continuous = True
         self._temperature_points = None
@@ -54,32 +55,14 @@ class MeasurementSetup:
         self._tk_root = tkinter.Tk()
         self._tk_root.withdraw()
         
-    def connect_to_devices(self):
+    def connect_to_devices(self, addresses):
         self.devices = {}
-        for name, addr in self._addresses.items():
-            devcls = device_classes[name]
+        for addr, devcls in addresses:
             try:
-                self.devices[name] = devcls(addr, self._resman)
+                self.devices[addr] = devcls(addr, self._resman)
             except:
-                print(f"Could not connect to device {name} at address {addr}")
+                print(f"Could not connect to device {devcls} at address {addr}")
 
-    @property
-    def supported_devices(self):
-        print("Currently supported devices:")
-        for dev in device_classes.keys():
-            print(dev, '\n')
-
-    @property
-    def lcr(self):
-        return self.devices["LCR"]
-    
-    @property
-    def ppms(self):
-        return self.devices["PPMS"]
-    
-    @property
-    def Janis(self):
-        return self.devices["Janis"]
 
     def choose_filename(self):
         """

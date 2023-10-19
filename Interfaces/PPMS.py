@@ -2,7 +2,7 @@ from pprint import pprint
 from time import sleep
 from collections import namedtuple
 
-from exceptions import InstrumentError
+from .exceptions import InstrumentError
 
 PPMSstatus = namedtuple('PPMSstatus', ['temperature', 'field', 'chamber', 'position'])
 
