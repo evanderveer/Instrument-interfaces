@@ -57,8 +57,7 @@ class LCR:
     def _initialize(self):
         self.resource.clear()
         self.resource.write('*RST')
-        self.resource.write(f"APER {self._measurement_time.value}, 
-                                   {self._averages}")
+        self.resource.write(f"APER {self._measurement_time.value}, {self._averages}")
         self.resource.write("BIAS:STAT OFF")
         self.resource.write(f"BIAS:VOLT {self._bias}")
         
