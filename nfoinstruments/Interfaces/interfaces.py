@@ -55,7 +55,7 @@ class MeasurementSetup:
         
     def connect_to_devices(self, addresses):
         self.devices = {}
-        for addr, devcls in addresses:
+        for addr, devcls in addresses.items():
             try:
                 self.devices[addr] = devcls(addr, self._resman)
             except:
