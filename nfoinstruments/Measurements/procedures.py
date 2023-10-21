@@ -1,6 +1,5 @@
 from time import sleep
-from pymeasure.experiment import Procedure
-from pymeasure.experiment import IntegerParameter
+from pymeasure.experiment import Procedure, IntegerParameter
 
 class TestProcedure(Procedure):
 

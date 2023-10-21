@@ -1,54 +1,58 @@
 from pprint import pprint
 from enum import Enum, auto
+from abc import ABC
 
-class SignalType(Enum):
-    CURRENT = auto()
-    VOLTAGE = auto()
+class LCR(ABC):
+    pass
 
-class MeasurementTime(Enum):
-    SHORT = 'SHOR'
-    MEDIUM = 'MED'
-    LONG = 'LONG'
+class E4890A(LCR):
 
-class MeasurementType(Enum):
-    CPD = 'CPD'
-    CPQ = 'CPQ'
-    CPG = 'CPG'
-    CPRP = 'CPRP'
-    CSD = 'CSD'
-    CSQ = 'CSQ'
-    CSRS = 'CSRS'
-    LPD = 'LPD'
-    LPQ = 'LPQ'
-    LPG = 'LPG'
-    LPRD = 'LPRD'
-    LSD = 'LSD'
-    LSQ = 'LSQ'
-    LSRD = 'LSRD'
-    LSRS = 'LSRS'
-    RX = 'RX'
-    ZTD = 'ZTD'
-    ZTR = 'ZTR'
-    GB = 'GB'
-    YTD = 'YTD'
-    YTR = 'YTR'
-    VDID = 'VDID'
+    class SignalType(Enum):
+        CURRENT = auto()
+        VOLTAGE = auto()
 
-class LCR:
+    class MeasurementTime(Enum):
+        SHORT = 'SHOR'
+        MEDIUM = 'MED'
+        LONG = 'LONG'
+
+    class MeasurementType(Enum):
+        CPD = 'CPD'
+        CPQ = 'CPQ'
+        CPG = 'CPG'
+        CPRP = 'CPRP'
+        CSD = 'CSD'
+        CSQ = 'CSQ'
+        CSRS = 'CSRS'
+        LPD = 'LPD'
+        LPQ = 'LPQ'
+        LPG = 'LPG'
+        LPRD = 'LPRD'
+        LSD = 'LSD'
+        LSQ = 'LSQ'
+        LSRD = 'LSRD'
+        LSRS = 'LSRS'
+        RX = 'RX'
+        ZTD = 'ZTD'
+        ZTR = 'ZTR'
+        GB = 'GB'
+        YTD = 'YTD'
+        YTR = 'YTR'
+        VDID = 'VDID'
 
     def __init__(self, address, resman):
         self.address = address
         self.resource = resman.open_resource(self.address, query_delay=0.1)
 
-        self._measurement_time = MeasurementTime.MEDIUM
+        self._measurement_time = E4890A.MeasurementTime.MEDIUM
         self._averages = 1
         self._bias = 0
         self._frequency = 100
-        self._measurement_type = MeasurementType.RX
+        self._measurement_type = E4890A.MeasurementType.RX
         self._signal_amplitude = 1
         self.measurement_timeout = 3
         self.instrument_name = 'Agilent E4980A'
-        self._signal_type = SignalType.VOLTAGE
+        self._signal_type = E4890A.SignalType.VOLTAGE
         self._alc_enabled = True
 
         self._initialize()
@@ -90,7 +94,7 @@ class LCR:
 
     @measurement_time.setter
     def measurement_time(self, time):
-        if not isinstance(time, MeasurementTime):
+        if not isinstance(time, E4890A.MeasurementTime):
             raise ValueError("measurement time must be SHORT, MEDIUM or LONG")
         self._measurement_time = time
         self.resource.write(f"APER {self._measurement_time.value}, {self._averages}")
@@ -112,7 +116,7 @@ class LCR:
 
     @bias.setter
     def bias(self, bias):
-        if self.signal_type == SignalType.VOLTAGE:
+        if self.signal_type == E4890A.SignalType.VOLTAGE:
             if not -40 <= bias <= 40:
                 raise ValueError("bias must be between -40 and 40 V")
             self._bias = bias
@@ -151,7 +155,7 @@ class LCR:
 
     @measurement_type.setter
     def measurement_type(self, measurement_type):
-        if not isinstance(measurement_type, MeasurementType):
+        if not isinstance(measurement_type, E4890A.MeasurementType):
             raise ValueError("measurement type invalid")
         self._measurement_type = measurement_type
         self.resource.write(f"FUNC:IMP:TYPE {self._measurement_type.value}")
@@ -162,12 +166,12 @@ class LCR:
 
     @signal_amplitude.setter
     def signal_amplitude(self, signal_amplitude):
-        if self.signal_type == SignalType.VOLTAGE:
+        if self.signal_type == E4890A.SignalType.VOLTAGE:
             if not 0 <= signal_amplitude <= 20:
                 raise ValueError("voltage signal amplitude must be between 0 and 20 V")
             self._signal_amplitude = signal_amplitude
             self.resource.write(f"VOLT {self._signal_amplitude}")
-        elif self.signal_type == SignalType.CURRENT:
+        elif self.signal_type == E4890A.SignalType.CURRENT:
             if not 0 <= signal_amplitude <= 0.1:
                 raise ValueError("current signal amplitude must be between 0 and 0.1 A")
             self._signal_amplitude = signal_amplitude
@@ -179,7 +183,7 @@ class LCR:
 
     @signal_type.setter
     def signal_type(self, signal_type):
-        if not isinstance(signal_type, SignalType):
+        if not isinstance(signal_type, E4890A.SignalType):
             raise ValueError("signal type must be 'voltage' or 'current")
         self._signal_type = signal_type
         self.resource.write(f"CURR 0")
@@ -195,6 +199,7 @@ class LCR:
         else:
             self.resource.write("AMPL:ALC OFF")
 
+    #TODO: Make this a property
     def get_value(self):
         result = self.resource.query("FETCH?").split(',')[0:2]
         return [float(val) for val in result]
