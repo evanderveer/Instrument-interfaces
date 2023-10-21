@@ -1,24 +1,26 @@
 import pyvisa
-
-import tkinter
-from tkinter import filedialog
-import os
+from time import time
 
 class MeasurementSetup:
     """Class representing a measurement setup."""
 
-    def __init__(self):
-        """Initialize the Measurement object."""
+    def __init__(self, debug=False):
+        """Initialize the MeasurementSetup object."""
 
+        self.resources = []
+
+        if debug:
+            self._resman = DummyResourceManager()
+            return
+        
         self._resman = pyvisa.ResourceManager()
-        self._resource = self._get_resources()
+        self._get_resources()
 
-        if len(self._resources) == 0:
+        if len(self.resources) == 0:
             raise InstrumentError("no devices found") 
 
     def _get_resources(self):
         addresses = self._resman.list_resources()
-        self.resources = []
         for addr in addresses:
             try:
                 #Try to open the resource, them immediately close it again
@@ -41,3 +43,24 @@ class InstrumentError(Exception):
 
     def __str__(self):
         return f"InstrumentError: {super().__str__()}"
+    
+class DummyResourceManager():
+    """Class pretending to be a pyVISA ResourceManager for debugging purposes."""
+
+    def __init__(self, **kwargs):
+        pass
+
+    def list_resources(self, **kwargs):
+        return []
+    
+    def open_resource(self, addr, **kwargs):
+        pass
+    
+class DummyResource():
+    """Class pretending to be a pyVISA Resource for debugging purposes."""
+
+    def __init__(self, address, resman, **kwargs):
+        self._resman = resman
+    
+    def read(self, **kwargs):
+        return time()
