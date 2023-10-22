@@ -1,4 +1,4 @@
-#Move all of this into the Measurement class
+#Move all of this into the Procedure classes
 self._filename = None
 self._temperature_continuous = True
 self._temperature_points = None

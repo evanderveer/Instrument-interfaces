@@ -1,11 +1,41 @@
 from pprint import pprint
 from enum import Enum, auto
-from abc import ABC
+from abc import ABC, abstractmethod
 
 class LCR(ABC):
-    pass
+    
+    @abstractmethod
+    def print_status(self):
+        pass
+
+    @property
+    @abstractmethod
+    def frequency(self):
+        pass
+
+    @frequency.setter
+    @abstractmethod
+    def frequency(self, frequency):
+        pass
+
+    @property
+    @abstractmethod
+    def signal_amplitude(self):
+        pass
+
+    @signal_amplitude.setter
+    @abstractmethod
+    def signal_amplitude(self, signal_amplitude):
+        pass
+
+    @property
+    @abstractmethod
+    def measurement(self):
+        pass
 
 class E4890A(LCR):
+
+    INSTRUMENT_ID = 'Agilent Technologies,E4980A,.+'
 
     class SignalType(Enum):
         CURRENT = auto()
@@ -40,26 +70,43 @@ class E4890A(LCR):
         YTR = 'YTR'
         VDID = 'VDID'
 
+    DEFAULT_AVERAGES = 1
+    DEFAULT_BIAS = 0
+    DEFAULT_FREQUENCY = 100
+    DEFAULT_SIGNAL_AMPLITUDE = 1
+    DEFAULT_MEASUREMENT_TIMEOUT = 3
+    DEFAULT_ALC_ENABLED = True
+    DEFAULT_MEASURMENT_TYPE = MeasurementType.RX
+    DEFAULT_SIGNAL_TYPE = SignalType.VOLTAGE
+    DEFAULT_MEASURMENT_TIME = MeasurementTime.MEDIUM
+
     def __init__(self, address, resman):
         self.address = address
         self.resource = resman.open_resource(self.address, query_delay=0.1)
 
-        self._measurement_time = E4890A.MeasurementTime.MEDIUM
-        self._averages = 1
-        self._bias = 0
-        self._frequency = 100
-        self._measurement_type = E4890A.MeasurementType.RX
-        self._signal_amplitude = 1
-        self.measurement_timeout = 3
-        self.instrument_name = 'Agilent E4980A'
-        self._signal_type = E4890A.SignalType.VOLTAGE
-        self._alc_enabled = True
-
-        self._initialize()
+        self.reset()
         self.print_status()
+
+    def reset(self, keep_settings=False):
+        if not keep_settings:
+            self._measurement_time = self.DEFAULT_MEASURMENT_TIME
+            self._averages = self.DEFAULT_AVERAGES
+            self._bias = self.DEFAULT_BIAS
+            self._frequency = self.DEFAULT_FREQUENCY
+            self._measurement_type = self.DEFAULT_MEASURMENT_TYPE
+            self._signal_amplitude = self.DEFAULT_SIGNAL_AMPLITUDE
+            self.measurement_timeout = self.DEFAULT_MEASUREMENT_TIMEOUT
+            self._signal_type = self.DEFAULT_SIGNAL_TYPE
+            self._alc_enabled = self.DEFAULT_ALC_ENABLED
+        
+        self._initialize()
+
+    def reboot(self):
+        self.resource.write("SYSTEM:RESTART")
 
     def _initialize(self):
         self.resource.clear()
+        self.resource.write("SYSTEM:PRESET")
         self.resource.write('*RST')
         self.resource.write(f"APER {self._measurement_time.value}, {self._averages}")
         self.resource.write("BIAS:STAT OFF")
@@ -78,7 +125,7 @@ class E4890A(LCR):
         self.resource.write("CORR:LOAD:STAT OFF")
         self.resource.write(f"CORR:LENG 0")
         
-        self.resource.timeout = self.measurement_timeout * 1000
+        self.resource.timeout = self.measurement_timeout * 1000 #sec -> millisec
         self.resource.clear()
         
     def print_status(self):
@@ -146,7 +193,6 @@ class E4890A(LCR):
         if not 20 <= frequency <= 2_000_000:
             raise ValueError("frequency must be between 20 Hz and 2 MHz")
         self._frequency = frequency
-        #print(f"FREQ {self._frequency}")
         self.resource.write(f"FREQ {self._frequency}")
 
     @property
@@ -199,13 +245,8 @@ class E4890A(LCR):
         else:
             self.resource.write("AMPL:ALC OFF")
 
-    #TODO: Make this a property
-    def get_value(self):
+    @property
+    def measurement(self):
         result = self.resource.query("FETCH?").split(',')[0:2]
         return [float(val) for val in result]
 
-    def reset(self):
-        self.resource.write("SYSTEM:PRESET")
-
-    def reboot(self):
-        self.resource.write("SYSTEM:RESTART")

@@ -1,15 +1,36 @@
 from pprint import pprint
 from time import sleep
 from collections import namedtuple
-from abc import ABC
+from abc import ABC, abstractmethod
 
-PPMSstatus = namedtuple('PPMSstatus', ['temperature', 'field', 'chamber', 'position'])
+from .interfaces import InstrumentError
 
 class TemperatureStage(ABC):
-    pass
+    
+    @property
+    @abstractmethod
+    def temperature(self):
+        pass
+
+    @property
+    @abstractmethod
+    def temperature_stable(self):
+        pass
+
+    @property
+    @abstractmethod
+    def temperature_setpoint(self):
+        pass
+
+    @temperature_setpoint.setter
+    @abstractmethod
+    def temperature_setpoint(self, setpoint):
+        pass
 
 class PPMS(TemperatureStage):
     """Class representing a Physical Property Measurement System (PPMS)."""
+
+    PPMSstatus = namedtuple('PPMSstatus', ['temperature', 'field', 'chamber', 'position'])
 
     def __init__(self, address, resman):
         """
@@ -58,10 +79,10 @@ class PPMS(TemperatureStage):
                 self._field = float(field)
                 self._position = float(pos)
                 stat_bin = int(status)
-                self._status = PPMSstatus(temperature=int(stat_bin & 15),
-                                      field=round(int(stat_bin & 240)/2**4),
-                                      chamber=round(int(stat_bin & 3840)/2**8),
-                                      position=round(int(stat_bin & 61440)/2**12)) # Magic
+                self._status = self.PPMSstatus(temperature=int(stat_bin & 15),
+                                               field=round(int(stat_bin & 240)/2**4),
+                                               chamber=round(int(stat_bin & 3840)/2**8),
+                                               position=round(int(stat_bin & 61440)/2**12)) #Magic
                 
                 temp_setpt, temp_rate, temp_appr_mode = self.resource.query('TEMP?').split(',')
                 self._temperature_setpoint = float(temp_setpt)
