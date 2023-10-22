@@ -33,6 +33,6 @@ class DummyProcedure(Procedure):
                 'Time_since_init': data - self._init_time,
                 'Time_since_start': data - self._start_time,
                 })
-            sleep(1)
+            sleep(0.01)
             if self.should_stop():
                 break

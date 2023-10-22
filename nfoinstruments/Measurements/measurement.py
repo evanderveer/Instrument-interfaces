@@ -1,5 +1,4 @@
 from pymeasure.experiment import Results, Worker
-from pymeasure.display import Plotter
 
 import tkinter
 from tkinter import filedialog
@@ -32,11 +31,9 @@ class Measurement:
         
         self._result = Results(self._procedure, increment_filename(self.filename))
         self._worker = Worker(self._result)
-        self._plotter = Plotter(self._result)
 
         self._worker.start()
         self._worker.join(timeout=self.timeout)
-        self._plotter.start()
 
     def choose_filename(self):
         """
