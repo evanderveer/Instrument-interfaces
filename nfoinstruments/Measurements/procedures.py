@@ -4,15 +4,24 @@ from time import sleep
 from pymeasure.experiment import Procedure, IntegerParameter
 from nfoinstruments.Interfaces.interfaces import DummyResource
 
+
+from .LCRprocedures import *
+
+
 class DummyProcedure(Procedure):
 
-    # a Parameter that defines the number of loop iterations
-    number_of_measurements = IntegerParameter('Number of measurements')
+    
+    
 
     # a list defining the order and appearance of columns in our data file
     DATA_COLUMNS = ['Number', 'Time_since_init', 'Time_since_start']
 
     def __init__(self, setup):
+
+        # a Parameter that defines the number of loop iterations
+        self.number_of_measurements = IntegerParameter('Number of measurements')
+        
+        
         self._setup = setup
         self._setup.connect_to_devices({1: DummyResource})
         self._init_time = self._setup.devices[1].read()
