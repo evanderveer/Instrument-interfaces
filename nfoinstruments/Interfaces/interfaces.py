@@ -18,6 +18,8 @@ class MeasurementSetup:
 
         if len(self.resources) == 0:
             raise InstrumentError("no devices found") 
+        
+        print(self.resources)
 
     def _get_resources(self):
         addresses = self._resman.list_resources()
@@ -34,8 +36,9 @@ class MeasurementSetup:
         for addr, devcls in addresses.items():
             try:
                 self.devices[addr] = devcls(addr, self._resman)
-            except:
+            except Exception as e:
                 print(f"Could not connect to device {devcls} at address {addr}")
+                print(e)
 
 class InstrumentError(Exception):
     def __init__(self, message):

@@ -106,7 +106,6 @@ class E4890A(LCR):
 
     def _initialize(self):
         self.resource.clear()
-        self.resource.write("SYSTEM:PRESET")
         self.resource.write('*RST')
         self.resource.write(f"APER {self._measurement_time.value}, {self._averages}")
         self.resource.write("BIAS:STAT OFF")
@@ -126,7 +125,6 @@ class E4890A(LCR):
         self.resource.write(f"CORR:LENG 0")
         
         self.resource.timeout = self.measurement_timeout * 1000 #sec -> millisec
-        self.resource.clear()
         
     def print_status(self):
         """
