@@ -4,8 +4,8 @@ from time import sleep
 from pymeasure.experiment import Procedure, IntegerParameter
 from nfoinstruments.Interfaces.interfaces import DummyResource
 
-
 from .LCRprocedures import *
+from .IAprocedure import *
 
 
 class DummyProcedure(Procedure):

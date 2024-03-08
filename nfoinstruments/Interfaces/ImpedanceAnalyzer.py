@@ -30,8 +30,7 @@ class HP4291A(ImpedanceAnalyzer):
         self.resource.write("*CLS")
         self.resource.write("INIT")
 
-    @property
-    def measurement(self):
+    def measure(self):
         self._reset_trigger()
         self.trigger()
         self.resource.wait_for_srq()

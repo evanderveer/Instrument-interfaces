@@ -251,12 +251,8 @@ class ISProcedureConstTemp(Procedure):
         self._bias_points = ListParameter('bias_points', units='V')
         self._frequency_points = ListParameter('frequency_points', units='Hz')
         
-
-
-
         self._setup = setup
         self._setup.connect_to_devices({
-                                        
                                         lcr_addr: E4890A
                                         })
 
