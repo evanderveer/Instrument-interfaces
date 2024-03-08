@@ -25,6 +25,9 @@ class ISProcedurePPMS(Procedure):
         self._frequency_points = ListParameter('frequency_points', units='Hz')
         self._no_overshoot = BooleanParameter('approach_mode', default=True)
         self._temperature_rate = FloatParameter('temperature_rate', units='K/min')
+        
+
+
 
         self._setup = setup
         self._setup.connect_to_devices({
@@ -65,15 +68,7 @@ class ISProcedurePPMS(Procedure):
                 break
 
     def _emit_measurement_data(self):
-        for i in range(5):
-            try:
-                cap_res = self._lcr.get_value()
-            except:
-                continue
-            else:
-                break
-        else:
-            return
+        cap_res = self._lcr.measurement
         self.emit('results', {
                 'Time': time(),
                 'Bias': self._lcr.bias,
@@ -241,3 +236,126 @@ class ISProcedurePPMS(Procedure):
         if temperature_rate<=0 or temperature_rate>20:
             raise  ValueError("temperature rate must be between 0 and 20K/min")
         self._temperature_rate = temperature_rate
+
+class ISProcedureConstTemp(Procedure):
+    """
+    Procedure for doing impedance spectroscopy at different temperatures
+    and bias offsets using the PPMS as the temperature controller. 
+    """
+
+    # a list defining the order and appearance of columns in our data file
+    DATA_COLUMNS = ['Time', 'Bias', 'Frequency', 'Temperature', 'R', 'X']
+
+    def __init__(self, setup, lcr_addr):
+
+        self._bias_points = ListParameter('bias_points', units='V')
+        self._frequency_points = ListParameter('frequency_points', units='Hz')
+        
+
+
+
+        self._setup = setup
+        self._setup.connect_to_devices({
+                                        
+                                        lcr_addr: E4890A
+                                        })
+
+        self._lcr = self._setup.devices[lcr_addr]
+
+        super().__init__()
+
+    def execute(self):
+        self._scan_bias()
+
+    def _scan_bias(self):
+        for b_point in self.bias_points:
+            self._lcr.bias = b_point
+            sleep(0.1)
+            self._scan_frequency() 
+
+    def _scan_frequency(self):
+        for frequency in self.frequency_points:
+            self._lcr.frequency = frequency
+            sleep(0.1)
+            self._emit_measurement_data()
+            if self.should_stop():
+                break
+
+    def _emit_measurement_data(self):
+        cap_res = self._lcr.measurement
+        self.emit('results', {
+                'Time': time(),
+                'Bias': self._lcr.bias,
+                'Frequency': self._lcr.frequency,
+                'R': cap_res[0],
+                'X': cap_res[1],
+            })
+            
+
+    @property
+    def bias_points(self):
+        """
+        Get the bias points.
+
+        Returns:
+            tuple: A tuple of biases representing the bias points.
+        """
+
+        return self._bias_points
+
+    @bias_points.setter
+    def bias_points(self, points):
+        """
+        Set the bias points.
+
+        Args:
+            points (iterable): An iterable (list, tuple) of biases representing the bias points.
+
+        Raises:
+            ValueError: If the points format is invalid or the values are out of range.
+        """
+
+        if not hasattr(points, "__iter__"):
+            raise ValueError("bias points must be an iterable (list, tuple) of temperatures")
+        points = tuple(points) # In case a generator is passed
+        if any(i<0 or i>40 for i in points):
+            raise ValueError("one or more of the bias points exceeds the minimum or maximum bias") 
+        self._bias_points = points
+
+    @property
+    def frequency_points(self):
+        """
+        Get the frequency points.
+
+        Returns:
+            tuple: A tuple of biases representing the frequency points.
+        """
+
+        return self._frequency_points
+
+    @frequency_points.setter
+    def frequency_points(self, points):
+        """
+        Set the frequency points.
+
+        Args:
+            points (iterable): An iterable (list, tuple) of biases representing the frequency points.
+
+        Raises:
+            ValueError: If the points format is invalid or the values are out of range.
+        """
+
+        if not hasattr(points, "__iter__"):
+            raise ValueError("frequency points must be an iterable (list, tuple) of temperatures")
+        points = tuple(points) # In case a generator is passed
+        if any(i<20 or i>2_000_000 for i in points):
+            raise ValueError("one or more of the frequency points exceeds the minimum or maximum") 
+        self._frequency_points = points
+
+    @property
+    def frequency_range(self):
+        pass
+
+    @frequency_range.setter
+    def frequency_range(self, frequency_range, num_points=100, logspaced=True):
+        pass
