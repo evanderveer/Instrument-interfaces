@@ -20,7 +20,7 @@ class Measurement:
     def __init__(self, procedure):
         self._procedure = procedure
         self.filename = None
-        self.timeout = 3600 
+        self.timeout = 36000 
 
         self._tk_root = tkinter.Tk()
         self._tk_root.withdraw()

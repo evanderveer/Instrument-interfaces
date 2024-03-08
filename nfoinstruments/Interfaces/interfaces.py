@@ -18,7 +18,7 @@ class MeasurementSetup:
 
         if len(self.resources) == 0:
             raise InstrumentError("no devices found") 
-        
+
         print(self.resources)
 
     def _get_resources(self):
