@@ -3,7 +3,7 @@ from enum import Enum, auto
 from abc import ABC, abstractmethod
 
 class ImpedanceAnalyzer(ABC):
-    
+
     @abstractmethod
     def measure(self):
         pass
@@ -35,4 +35,4 @@ class HP4291A(ImpedanceAnalyzer):
         self.trigger()
         self.resource.wait_for_srq()
         result = self.resource.query("DATA? RAW")
-        print(result)
+        return(result)
