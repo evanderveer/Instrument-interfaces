@@ -3,9 +3,9 @@ from enum import Enum, auto
 from abc import ABC, abstractmethod
 
 class ImpedanceAnalyzer(ABC):
-    @property
+    
     @abstractmethod
-    def measurement(self):
+    def measure(self):
         pass
 
 class HP4291A(ImpedanceAnalyzer):
