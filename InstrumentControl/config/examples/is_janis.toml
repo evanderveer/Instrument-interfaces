@@ -2,8 +2,8 @@
 # Temperature-dependent impedance spectroscopy using the Janis probe station.
 #
 # Usage:
-#   from nfoinstruments.procedures import ISProcedureJanis
-#   from nfoinstruments.runner import Measurement
+#   from InstrumentControl.procedures import ISProcedureJanis
+#   from InstrumentControl.runner import Measurement
 #
 #   m = Measurement.from_config(ISProcedureJanis, "config/examples/is_janis.toml")
 #   m.filename = "results/janis_run.csv"

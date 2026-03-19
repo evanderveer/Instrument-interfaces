@@ -21,8 +21,8 @@ class MeasurementSetup:
 
     Usage::
 
-        from nfoinstruments.instruments.setup import MeasurementSetup
-        from nfoinstruments.instruments.e4980a import E4980A
+        from InstrumentControl.instruments.setup import MeasurementSetup
+        from InstrumentControl.instruments.e4980a import E4980A
 
         setup = MeasurementSetup()
         setup.connect_to_devices({"GPIB0::17::INSTR": E4980A})

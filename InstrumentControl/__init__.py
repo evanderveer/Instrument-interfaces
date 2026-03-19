@@ -1,20 +1,20 @@
-"""nfoinstruments — laboratory instrument control and measurement automation.
+"""InstrumentControl — laboratory instrument control and measurement automation.
 
 This package provides:
 
-- **Instrument drivers** (:mod:`nfoinstruments.instruments`) — PyVISA-based
+- **Instrument drivers** (:mod:`InstrumentControl.instruments`) — PyVISA-based
   drivers for scientific instruments, built on abstract base classes so new
   hardware can be added without touching existing code.
-- **Measurement procedures** (:mod:`nfoinstruments.procedures`) — PyMeasure
+- **Measurement procedures** (:mod:`InstrumentControl.procedures`) — PyMeasure
   ``Procedure`` subclasses that implement specific experimental protocols.
   Each procedure can be configured programmatically or via a TOML file.
-- **Measurement runner** (:mod:`nfoinstruments.runner`) — wraps PyMeasure's
+- **Measurement runner** (:mod:`InstrumentControl.runner`) — wraps PyMeasure's
   ``Worker`` / ``Results`` pipeline to execute procedures and save CSV data.
 
 Quick-start example::
 
-    from nfoinstruments.procedures import ISProcedureConstTemp
-    from nfoinstruments.runner import Measurement
+    from InstrumentControl.procedures import ISProcedureConstTemp
+    from InstrumentControl.runner import Measurement
 
     # Load parameters from a config file and run
     m = Measurement.from_config(ISProcedureConstTemp, "config/examples/is_const_temp.toml")
@@ -22,7 +22,7 @@ Quick-start example::
     m.run()
 """
 
-from nfoinstruments.instruments import (
+from InstrumentControl.instruments import (
     E4980A,
     HP4291A,
     ImpedanceAnalyzer,
@@ -34,7 +34,7 @@ from nfoinstruments.instruments import (
     PPMS,
     TemperatureStage,
 )
-from nfoinstruments.procedures import (
+from InstrumentControl.procedures import (
     ConfigurableProcedure,
     DummyProcedure,
     IAProcedure,
@@ -42,7 +42,7 @@ from nfoinstruments.procedures import (
     ISProcedureJanis,
     ISProcedurePPMS,
 )
-from nfoinstruments.runner import Measurement
+from InstrumentControl.runner import Measurement
 
 __all__ = [
     # Instruments

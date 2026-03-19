@@ -1,22 +1,22 @@
-"""Instrument drivers for nfoinstruments.
+"""Instrument drivers for InstrumentControl.
 
 Each module in this package contains a driver for a specific piece of
 laboratory equipment. All drivers implement one of the abstract base classes
-defined in :mod:`nfoinstruments.instruments.base`.
+defined in :mod:`InstrumentControl.instruments.base`.
 
 Available drivers
 -----------------
-- :class:`~nfoinstruments.instruments.e4980a.E4980A` — Agilent E4980A LCR meter (fully implemented)
-- :class:`~nfoinstruments.instruments.ppms.PPMS` — Quantum Design PPMS (fully implemented)
-- :class:`~nfoinstruments.instruments.janis.Janis` — Janis probe station controller (fully implemented)
-- :class:`~nfoinstruments.instruments.hp4291a.HP4291A` — HP 4291A impedance analyzer (stub)
-- :class:`~nfoinstruments.instruments.k4200.K4200` — Keithley K4200 (stub)
+- :class:`~InstrumentControl.instruments.e4980a.E4980A` — Agilent E4980A LCR meter (fully implemented)
+- :class:`~InstrumentControl.instruments.ppms.PPMS` — Quantum Design PPMS (fully implemented)
+- :class:`~InstrumentControl.instruments.janis.Janis` — Janis probe station controller (fully implemented)
+- :class:`~InstrumentControl.instruments.hp4291a.HP4291A` — HP 4291A impedance analyzer (stub)
+- :class:`~InstrumentControl.instruments.k4200.K4200` — Keithley K4200 (stub)
 
 Connection helpers
 ------------------
-- :class:`~nfoinstruments.instruments.setup.MeasurementSetup` — VISA resource discovery and connection
-- :class:`~nfoinstruments.instruments.setup.DummyResourceManager` — offline testing
-- :class:`~nfoinstruments.instruments.setup.DummyResource` — offline testing
+- :class:`~InstrumentControl.instruments.setup.MeasurementSetup` — VISA resource discovery and connection
+- :class:`~InstrumentControl.instruments.setup.DummyResourceManager` — offline testing
+- :class:`~InstrumentControl.instruments.setup.DummyResource` — offline testing
 """
 
 from .base import TemperatureStage, LCRMeter, ImpedanceAnalyzer

@@ -2,8 +2,8 @@
 # Temperature-dependent impedance spectroscopy using the PPMS cryostat.
 #
 # Usage:
-#   from nfoinstruments.procedures import ISProcedurePPMS
-#   from nfoinstruments.runner import Measurement
+#   from InstrumentControl.procedures import ISProcedurePPMS
+#   from InstrumentControl.runner import Measurement
 #
 #   m = Measurement.from_config(ISProcedurePPMS, "config/examples/is_ppms.toml")
 #   m.filename = "results/my_run.csv"

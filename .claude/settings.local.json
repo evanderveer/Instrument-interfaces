@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /c/Users/Ewout/Documents/GitHub/Instrument-interfaces log --oneline --all)",
+      "Bash(git -C /c/Users/Ewout/Documents/GitHub/Instrument-interfaces log --format=\"%h %s\" -10)",
+      "Bash(git ls-tree:*)"
+    ]
+  }
+}

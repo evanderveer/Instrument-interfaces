@@ -2,8 +2,8 @@
 # Impedance spectroscopy at a fixed temperature (LCR meter only, no cryostat).
 #
 # Usage:
-#   from nfoinstruments.procedures import ISProcedureConstTemp
-#   from nfoinstruments.runner import Measurement
+#   from InstrumentControl.procedures import ISProcedureConstTemp
+#   from InstrumentControl.runner import Measurement
 #
 #   m = Measurement.from_config(ISProcedureConstTemp, "config/examples/is_const_temp.toml")
 #   m.filename = "results/room_temp_run.csv"

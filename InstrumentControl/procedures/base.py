@@ -1,4 +1,4 @@
-"""Base class for all nfoinstruments measurement procedures.
+"""Base class for all InstrumentControl measurement procedures.
 
 All procedures should subclass :class:`ConfigurableProcedure` instead of
 :class:`pymeasure.experiment.Procedure` directly. This adds TOML-based
@@ -8,8 +8,8 @@ Procedure lifecycle (PyMeasure)
 --------------------------------
 1. Instantiate the procedure class.
 2. Set parameter values (manually or via :meth:`from_config`).
-3. Pass the procedure to a :class:`~nfoinstruments.runner.Measurement` and call
-   :meth:`~nfoinstruments.runner.Measurement.run`.
+3. Pass the procedure to a :class:`~InstrumentControl.runner.Measurement` and call
+   :meth:`~InstrumentControl.runner.Measurement.run`.
 4. PyMeasure calls ``startup()`` → ``execute()`` → ``shutdown()`` in a worker thread.
 
 Adding a new procedure
@@ -62,7 +62,7 @@ from pymeasure.experiment import Procedure
 class ConfigurableProcedure(Procedure):
     """PyMeasure :class:`~pymeasure.experiment.Procedure` with TOML config loading.
 
-    All measurement procedures in nfoinstruments inherit from this class.
+    All measurement procedures in InstrumentControl inherit from this class.
     It does not define any parameters itself; those are declared by each
     concrete subclass.
     """

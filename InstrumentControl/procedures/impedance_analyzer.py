@@ -4,15 +4,15 @@
     This procedure is a stub. The ``execute()`` method triggers a sweep but
     does not yet parse or emit any data. Contributions welcome.
 
-TODO: Parse the raw sweep data returned by :meth:`~nfoinstruments.instruments.hp4291a.HP4291A.measure`
+TODO: Parse the raw sweep data returned by :meth:`~InstrumentControl.instruments.hp4291a.HP4291A.measure`
       into (frequency, Z, phase) arrays and emit them row by row.
 TODO: Add parameters for sweep range and averaging.
 """
 
 from pymeasure.experiment import Parameter
 
-from nfoinstruments.instruments.hp4291a import HP4291A
-from nfoinstruments.instruments.setup import MeasurementSetup
+from InstrumentControl.instruments.hp4291a import HP4291A
+from InstrumentControl.instruments.setup import MeasurementSetup
 
 from .base import ConfigurableProcedure
 

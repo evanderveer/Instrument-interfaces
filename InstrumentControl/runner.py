@@ -2,13 +2,13 @@
 
 :class:`Measurement` wraps PyMeasure's :class:`~pymeasure.experiment.Worker`
 and :class:`~pymeasure.experiment.Results` to run a
-:class:`~nfoinstruments.procedures.base.ConfigurableProcedure` in a background
+:class:`~InstrumentControl.procedures.base.ConfigurableProcedure` in a background
 thread and stream data to a CSV file.
 
 Typical usage::
 
-    from nfoinstruments.procedures import ISProcedureConstTemp
-    from nfoinstruments.runner import Measurement
+    from InstrumentControl.procedures import ISProcedureConstTemp
+    from InstrumentControl.runner import Measurement
 
     # Option A: configure manually
     proc = ISProcedureConstTemp()
@@ -35,7 +35,7 @@ from tkinter import filedialog
 
 from pymeasure.experiment import Results, Worker
 
-from nfoinstruments.procedures.base import ConfigurableProcedure
+from InstrumentControl.procedures.base import ConfigurableProcedure
 
 
 def _increment_filename(path: str) -> str:
@@ -60,7 +60,7 @@ def _increment_filename(path: str) -> str:
 
 
 class Measurement:
-    """Runs a :class:`~nfoinstruments.procedures.base.ConfigurableProcedure` and saves results.
+    """Runs a :class:`~InstrumentControl.procedures.base.ConfigurableProcedure` and saves results.
 
     The procedure executes in a background :class:`~pymeasure.experiment.Worker`
     thread; this object blocks in :meth:`run` until the worker finishes or the
@@ -94,7 +94,7 @@ class Measurement:
 
         Args:
             procedure_cls: The procedure class to instantiate
-                (e.g. :class:`~nfoinstruments.procedures.ISProcedurePPMS`).
+                (e.g. :class:`~InstrumentControl.procedures.ISProcedurePPMS`).
             config_path: Path to the TOML configuration file.
 
         Returns:

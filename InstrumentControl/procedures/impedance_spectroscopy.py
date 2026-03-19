@@ -6,7 +6,7 @@ Three procedure variants are provided:
 - :class:`ISProcedureJanis` — temperature-dependent IS using the Janis probe station.
 - :class:`ISProcedureConstTemp` — IS at a fixed temperature (LCR only, no stage).
 
-All procedures inherit from :class:`~nfoinstruments.procedures.base.ConfigurableProcedure`
+All procedures inherit from :class:`~InstrumentControl.procedures.base.ConfigurableProcedure`
 and follow the standard PyMeasure procedure lifecycle (``startup`` → ``execute``
 → ``shutdown``). Parameters are declared as class-level descriptors so they are
 automatically discovered by PyMeasure's GUI infrastructure if needed.
@@ -16,7 +16,7 @@ Data columns emitted: ``Time``, ``Bias``, ``Frequency``, ``Temperature``, ``R``,
 Configuration
 -------------
 All parameters can be set programmatically or loaded from a TOML file via
-:meth:`~nfoinstruments.procedures.base.ConfigurableProcedure.from_config`.
+:meth:`~InstrumentControl.procedures.base.ConfigurableProcedure.from_config`.
 See ``config/examples/is_ppms.toml`` for a reference configuration.
 """
 
@@ -28,10 +28,10 @@ from pymeasure.experiment import (
     Parameter,
 )
 
-from nfoinstruments.instruments.e4980a import E4980A
-from nfoinstruments.instruments.janis import Janis
-from nfoinstruments.instruments.ppms import PPMS
-from nfoinstruments.instruments.setup import MeasurementSetup
+from InstrumentControl.instruments.e4980a import E4980A
+from InstrumentControl.instruments.janis import Janis
+from InstrumentControl.instruments.ppms import PPMS
+from InstrumentControl.instruments.setup import MeasurementSetup
 
 from .base import ConfigurableProcedure
 

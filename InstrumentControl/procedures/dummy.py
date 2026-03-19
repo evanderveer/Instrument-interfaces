@@ -1,8 +1,8 @@
 """Dummy procedure for offline testing of the measurement pipeline.
 
-:class:`DummyProcedure` connects to a :class:`~nfoinstruments.instruments.setup.DummyResource`
+:class:`DummyProcedure` connects to a :class:`~InstrumentControl.instruments.setup.DummyResource`
 (no real hardware) and emits timestamps, making it easy to verify that the
-:class:`~nfoinstruments.runner.Measurement` worker pipeline works end-to-end
+:class:`~InstrumentControl.runner.Measurement` worker pipeline works end-to-end
 without any instruments attached.
 """
 
@@ -10,7 +10,7 @@ from time import sleep
 
 from pymeasure.experiment import IntegerParameter
 
-from nfoinstruments.instruments.setup import DummyResource, MeasurementSetup
+from InstrumentControl.instruments.setup import DummyResource, MeasurementSetup
 
 from .base import ConfigurableProcedure
 
@@ -25,8 +25,8 @@ class DummyProcedure(ConfigurableProcedure):
 
     Example::
 
-        from nfoinstruments.procedures.dummy import DummyProcedure
-        from nfoinstruments.runner import Measurement
+        from InstrumentControl.procedures.dummy import DummyProcedure
+        from InstrumentControl.runner import Measurement
 
         proc = DummyProcedure()
         proc.number_of_measurements = 10
