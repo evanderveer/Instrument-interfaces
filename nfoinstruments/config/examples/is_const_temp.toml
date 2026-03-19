@@ -1,0 +1,26 @@
+# Configuration for ISProcedureConstTemp
+# Impedance spectroscopy at a fixed temperature (LCR meter only, no cryostat).
+#
+# Usage:
+#   from nfoinstruments.procedures import ISProcedureConstTemp
+#   from nfoinstruments.runner import Measurement
+#
+#   m = Measurement.from_config(ISProcedureConstTemp, "config/examples/is_const_temp.toml")
+#   m.filename = "results/room_temp_run.csv"
+#   m.run()
+
+[instruments]
+lcr_address = "GPIB0::17::INSTR"
+
+[measurement]
+# DC bias voltages (V, range -40 to +40)
+bias_points = [0.0, 0.5, 1.0, 1.5, 2.0]
+
+# AC frequencies (Hz, range 20–2_000_000)
+frequency_points = [
+    100.0,
+    1_000.0,
+    10_000.0,
+    100_000.0,
+    1_000_000.0,
+]

@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nfoinstruments"
+version = "0.1.0"
+description = "Laboratory instrument control and measurement automation for cryogenic electrical characterisation experiments"
+authors = [
+    { name = "Ewout van der Veer", email = "ewout.van.der.veer@rug.nl" }
+]
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["instrument", "measurement", "GPIB", "VISA", "pymeasure", "impedance", "cryogenic"]
+dependencies = [
+    "pyvisa",
+    "pymeasure",
+]
+
+[project.optional-dependencies]
+# tomli is only needed on Python < 3.11; tomllib is part of stdlib from 3.11 onward.
+compat = ["tomli; python_version < '3.11'"]
+
+[tool.setuptools.packages.find]
+# Automatically discover all packages under the repo root
+where = ["."]
+include = ["nfoinstruments*"]

@@ -1,0 +1,42 @@
+# Configuration for ISProcedurePPMS
+# Temperature-dependent impedance spectroscopy using the PPMS cryostat.
+#
+# Usage:
+#   from nfoinstruments.procedures import ISProcedurePPMS
+#   from nfoinstruments.runner import Measurement
+#
+#   m = Measurement.from_config(ISProcedurePPMS, "config/examples/is_ppms.toml")
+#   m.filename = "results/my_run.csv"
+#   m.run()
+#
+# All keys in [instruments] and [measurement] map directly to procedure
+# parameter names. Unknown keys are silently ignored.
+
+[instruments]
+ppms_address = "GPIB0::15::INSTR"
+lcr_address  = "GPIB0::17::INSTR"
+
+[measurement]
+# Temperature to settle at before the sweep begins (K)
+start_temperature = 300.0
+
+# Ramp rate between temperature setpoints (K/min, max 20)
+temperature_rate = 5.0
+
+# Approach mode: true = "no overshoot", false = "fast settle"
+no_overshoot = true
+
+# Ordered list of temperature setpoints (K)
+temperature_points = [100.0, 150.0, 200.0, 250.0, 300.0]
+
+# DC bias voltages applied at each temperature (V, range -40 to +40)
+bias_points = [0.0, 0.5, 1.0, 1.5, 2.0]
+
+# AC frequencies measured at each (temperature, bias) point (Hz, range 20–2_000_000)
+frequency_points = [
+    100.0,
+    1_000.0,
+    10_000.0,
+    100_000.0,
+    1_000_000.0,
+]
