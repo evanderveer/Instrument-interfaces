@@ -1,4 +1,4 @@
-# nfoinstruments
+# InstrumentControl
 
 A Python package for laboratory instrument control and measurement automation, built on [PyMeasure](https://pymeasure.readthedocs.io) and [PyVISA](https://pyvisa.readthedocs.io). Designed for cryogenic electrical characterisation experiments (impedance spectroscopy, transport measurements, etc.) with clean extension points for new instruments and measurement protocols.
 
@@ -29,14 +29,14 @@ A Python package for laboratory instrument control and measurement automation, b
 pip install -e .
 ```
 
-This installs `nfoinstruments` in editable mode along with its dependencies (`pyvisa`, `pymeasure`).
+This installs `InstrumentControl` in editable mode along with its dependencies (`pyvisa`, `pymeasure`).
 
 ---
 
 ## Package overview
 
 ```
-nfoinstruments/
+InstrumentControl/
 ├── instruments/          # Instrument drivers
 │   ├── base.py           # Abstract base classes
 │   ├── e4980a.py         # Agilent E4980A LCR meter
@@ -68,8 +68,8 @@ nfoinstruments/
 ### Programmatic configuration
 
 ```python
-from nfoinstruments.procedures import ISProcedureConstTemp
-from nfoinstruments.runner import Measurement
+from InstrumentControl.procedures import ISProcedureConstTemp
+from InstrumentControl.runner import Measurement
 
 # 1. Create and configure the procedure
 proc = ISProcedureConstTemp()
@@ -88,8 +88,8 @@ m.run()
 ### Loading from a config file
 
 ```python
-from nfoinstruments.procedures import ISProcedurePPMS
-from nfoinstruments.runner import Measurement
+from InstrumentControl.procedures import ISProcedurePPMS
+from InstrumentControl.runner import Measurement
 
 m = Measurement.from_config(ISProcedurePPMS, "config/examples/is_ppms.toml")
 m.filename = "results/run_001.csv"
@@ -107,8 +107,8 @@ m.run()
 ### Offline testing (no hardware)
 
 ```python
-from nfoinstruments.procedures import DummyProcedure
-from nfoinstruments.runner import Measurement
+from InstrumentControl.procedures import DummyProcedure
+from InstrumentControl.runner import Measurement
 
 proc = DummyProcedure()
 proc.number_of_measurements = 20
@@ -149,7 +149,7 @@ TOML comments (`# ...`) are supported, making config files self-documenting and 
 The `Measurement` class handles file management and execution:
 
 ```python
-from nfoinstruments.runner import Measurement
+from InstrumentControl.runner import Measurement
 
 m = Measurement(procedure)
 m.filename = "data/run_001.csv"   # set output path directly …
@@ -179,16 +179,16 @@ Time,Bias,Frequency,Temperature,R,X
 
 ### Adding a new instrument driver
 
-1. **Choose the right base class** from `nfoinstruments/instruments/base.py`:
+1. **Choose the right base class** from `InstrumentControl/instruments/base.py`:
    - `TemperatureStage` — anything that controls sample temperature
    - `LCRMeter` — LCR / impedance meters with per-point measurement
    - `ImpedanceAnalyzer` — swept impedance analyzers
    - If none fits, add a new ABC to `base.py` following the same pattern.
 
-2. **Create a new module** in `nfoinstruments/instruments/`, e.g. `sr830.py`:
+2. **Create a new module** in `InstrumentControl/instruments/`, e.g. `sr830.py`:
 
 ```python
-# nfoinstruments/instruments/sr830.py
+# InstrumentControl/instruments/sr830.py
 """Stanford Research SR830 lock-in amplifier driver."""
 
 from .base import LCRMeter  # or whichever ABC fits
@@ -228,7 +228,7 @@ class SR830(LCRMeter):
         return [x, y]
 ```
 
-3. **Register the driver** in `nfoinstruments/instruments/__init__.py`:
+3. **Register the driver** in `InstrumentControl/instruments/__init__.py`:
 
 ```python
 from .sr830 import SR830
@@ -236,25 +236,25 @@ from .sr830 import SR830
 __all__ = [..., "SR830"]
 ```
 
-4. The driver is now available as `from nfoinstruments.instruments import SR830` and can be used directly in any procedure's `startup()`.
+4. The driver is now available as `from InstrumentControl.instruments import SR830` and can be used directly in any procedure's `startup()`.
 
 ---
 
 ### Adding a new measurement procedure
 
-1. **Create a new module** in `nfoinstruments/procedures/`, e.g. `transport.py`:
+1. **Create a new module** in `InstrumentControl/procedures/`, e.g. `transport.py`:
 
 ```python
-# nfoinstruments/procedures/transport.py
+# InstrumentControl/procedures/transport.py
 """Four-wire resistance measurement procedure."""
 
 from time import sleep, time
 
 from pymeasure.experiment import FloatParameter, Parameter
 
-from nfoinstruments.instruments.ppms import PPMS
-from nfoinstruments.instruments.sr830 import SR830
-from nfoinstruments.instruments.setup import MeasurementSetup
+from InstrumentControl.instruments.ppms import PPMS
+from InstrumentControl.instruments.sr830 import SR830
+from InstrumentControl.instruments.setup import MeasurementSetup
 
 from .base import ConfigurableProcedure
 
@@ -316,7 +316,7 @@ class ResistancePPMS(ConfigurableProcedure):
         """No specific cleanup required."""
 ```
 
-2. **Register the procedure** in `nfoinstruments/procedures/__init__.py`:
+2. **Register the procedure** in `InstrumentControl/procedures/__init__.py`:
 
 ```python
 from .transport import ResistancePPMS
@@ -340,8 +340,8 @@ temperature_points = [300.0, 250.0, 200.0, 150.0, 100.0]
 4. **Run it**:
 
 ```python
-from nfoinstruments.procedures.transport import ResistancePPMS
-from nfoinstruments.runner import Measurement
+from InstrumentControl.procedures.transport import ResistancePPMS
+from InstrumentControl.runner import Measurement
 
 m = Measurement.from_config(ResistancePPMS, "config/my_resistance_run.toml")
 m.filename = "results/resistance_run.csv"
@@ -408,7 +408,7 @@ All IS procedures emit CSV columns: `Time, Bias, Frequency, Temperature, R, X`.
 ## Project structure
 
 ```
-nfoinstruments/
+InstrumentControl/
 ├── __init__.py                        # Top-level exports
 ├── instruments/
 │   ├── __init__.py

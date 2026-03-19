@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nfoinstruments"
+name = "InstrumentControl"
 version = "0.1.0"
 description = "Laboratory instrument control and measurement automation for cryogenic electrical characterisation experiments"
 authors = [
@@ -24,4 +24,4 @@ compat = ["tomli; python_version < '3.11'"]
 [tool.setuptools.packages.find]
 # Automatically discover all packages under the repo root
 where = ["."]
-include = ["nfoinstruments*"]
+include = ["InstrumentControl*"]
